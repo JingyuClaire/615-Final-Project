@@ -12,7 +12,7 @@ library(ggmap)
 
 # In step 1 and 2, I picked 11 weeks at random for each month from Nov 2021 to Sep 2022 (can't find 
 # Oct 2022 and later data), and I call this data "selected_week". 
-# Reminder: This selected_week is different from the data I used to do the EDA. 
+# Reminder: This selected_week is different from the "selected_week" I used to do the EDA, because the process is random. 
 
 # In step 3, I picked 3 pairs of stops for each line of the T, and I 
 # get the location data and put them together. 
@@ -20,6 +20,8 @@ library(ggmap)
 
 # In step 4, I generate a shiny app using locate_new
 # You can skip running step 1 to 3 by downloading locate_new.csv and starting Step 4
+# Reminder: I tried to publish my Shiny app but the web page shows nothing, I put the
+# link at the end.
 
 #### Step 1: same process as EDA report: import the data, cleaning and exploration####
 y21HRQ4 <- read.csv("HRTravelTimesQ4_21.csv")
