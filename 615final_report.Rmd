@@ -13,26 +13,19 @@ library(ggplot2)
 library(stringr)
 library(hrbrthemes)
 library(viridis)
-# y21HRQ4 <- read.csv("HRTravelTimesQ4_21.csv")
-# 
-# y21LRQ4 <- read.csv("LRTravelTimesQ4_21.csv")
-# 
-# HRQ1 <- read.csv("2022-Q1_HRTravelTimes.csv")
-# 
-# LRQ1 <- read.csv("2022-Q1_LRTravelTimes.csv")
-# 
-# HRQ2 <- read.csv("2022-Q2_HRTravelTimes.csv")
-# 
-# LRQ2 <- read.csv("2022-Q2_LRTravelTimes.csv")
-# 
-# HRQ3 <- read.csv("2022-Q3_HRTravelTimes.csv")
-# 
-# LRQ3 <- read.csv("2022-Q3_LRTravelTimes.csv")
 ```
 
 # Aquiring the data and explore the data
 ```{r}
 ####import the data, cleaning and exploration####
+y21HRQ4 <- read.csv("HRTravelTimesQ4_21.csv")
+y21LRQ4 <- read.csv("LRTravelTimesQ4_21.csv")
+HRQ1 <- read.csv("2022-Q1_HRTravelTimes.csv")
+LRQ1 <- read.csv("2022-Q1_LRTravelTimes.csv")
+HRQ2 <- read.csv("2022-Q2_HRTravelTimes.csv")
+LRQ2 <- read.csv("2022-Q2_LRTravelTimes.csv")
+HRQ3 <- read.csv("2022-Q3_HRTravelTimes.csv")
+LRQ3 <- read.csv("2022-Q3_LRTravelTimes.csv")
 
 # service_date is Nov 2021 to Sep 2022
 date4 = unique(y21LRQ4$service_date) # Oct to Dec
