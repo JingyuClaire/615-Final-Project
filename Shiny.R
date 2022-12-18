@@ -7,15 +7,29 @@ library(viridis)
 library(sf)
 library(leaflet)
 library(ggmap)
-####same process as EDA report: import the data, cleaning and exploration####
-# y21HRQ4 <- read.csv("HRTravelTimesQ4_21.csv")
-# y21LRQ4 <- read.csv("LRTravelTimesQ4_21.csv")
-# HRQ1 <- read.csv("2022-Q1_HRTravelTimes.csv")
-# LRQ1 <- read.csv("2022-Q1_LRTravelTimes.csv")
-# HRQ2 <- read.csv("2022-Q2_HRTravelTimes.csv")
-# LRQ2 <- read.csv("2022-Q2_LRTravelTimes.csv")
-# HRQ3 <- read.csv("2022-Q3_HRTravelTimes.csv")
-# LRQ3 <- read.csv("2022-Q3_LRTravelTimes.csv")
+
+# Please read below before running this code:
+
+# In step 1 and 2, I picked 11 weeks at random for each month from Nov 2021 to Sep 2022 (can't find 
+# Oct 2022 and later data), and I call this data "selected_week". 
+# Reminder: This selected_week is different from the data I used to do the EDA. 
+
+# In step 3, I picked 3 pairs of stops for each line of the T, and I 
+# get the location data and put them together. 
+# Reminder: You can skip this step by downloading "locate_new.csv"
+
+# In step 4, I generate a shiny app using locate_new
+# You can skip running step 1 to 3 by downloading locate_new.csv and starting Step 4
+
+#### Step 1: same process as EDA report: import the data, cleaning and exploration####
+y21HRQ4 <- read.csv("HRTravelTimesQ4_21.csv")
+y21LRQ4 <- read.csv("LRTravelTimesQ4_21.csv")
+HRQ1 <- read.csv("2022-Q1_HRTravelTimes.csv")
+LRQ1 <- read.csv("2022-Q1_LRTravelTimes.csv")
+HRQ2 <- read.csv("2022-Q2_HRTravelTimes.csv")
+LRQ2 <- read.csv("2022-Q2_LRTravelTimes.csv")
+HRQ3 <- read.csv("2022-Q3_HRTravelTimes.csv")
+LRQ3 <- read.csv("2022-Q3_LRTravelTimes.csv")
 
 # service_date is Nov 2021 to Sep 2022
 date4 = unique(y21LRQ4$service_date) # Oct to Dec
@@ -35,7 +49,7 @@ delete_lr = grep("-10-", y21LRQ4$service_date)
 y21LRQ4 %<>% filter(!row_number() %in% delete_lr)
 
 
-####same process as EDA report: pick a week randomly from each month (11 months)####
+#### Step 2:pick a week randomly from each month (11 months)####
 
 # pick two weeks from each of two months in 2021 (Nov to Dec)
 selected_week = data.frame()
@@ -87,13 +101,14 @@ for (k in 1:9){
   }
   
 }
-#####import the data of longitude and latitude of stops#####
-# write.csv(selected_week,"selected_week.csv")
+##### Step 3: import the data of longitude and latitude of stops#####
+
+# selected_week <- read.csv("selected_week.csv") 
 locat_raw <- read.csv("MBTA_Systemwide_GTFS_Map_other.csv")
 locat <- locat_raw %>% select(stop_code, stop_name, stop_lat, 
                               stop_lon, zone_id, municipality)
 
-# pick 3 pairs of stops on each different line
+# pick 3 pairs of stops on each different line: orange, red, blue, green-BCDE, mattapan
 routes = unique(selected_week$route_id)
 selected_week$from_to_id <- str_c(selected_week$from_stop_id, sep = "-", selected_week$to_stop_id )
 
@@ -106,6 +121,7 @@ for (i in 1:length(routes)) {
   pairs <- bind_rows(pairs, tmp_df)
 }
 
+# finished with picking the pairs of stops
 pairs %<>% separate(col= pairs_of_stops,
                     into = c("from_stop_id", "to_stop_id"),
                     sep = "-",
@@ -115,6 +131,8 @@ pairs_new <- pairs %>% pivot_longer( cols = from_stop_id:to_stop_id,
                                 names_to = "direction",
                                 values_to = "stop_id")
 stop_id <- pairs_new$stop_id
+
+# we add the location data of stops to the stop pairs data
 tmp_locate <- data.frame()
 for (i in 1:dim(pairs_new)[1]) {
   find_locate <- locat %>% slice(grep(stop_id[i], locat$stop_code))
@@ -123,6 +141,10 @@ for (i in 1:dim(pairs_new)[1]) {
 locate_new <- bind_cols(pairs_new,tmp_locate)
 
 locate_new %<>% select(!all_of("stop_code")) 
+
+##### Step 4: now we get the data to do the shiny app#####
+# or you can download the data locate_new.csv and import it
+# locate_new <- read.csv("locate_new.csv")
 locate_new$pairs_id = rep(c(1:24),each =  2 )
 
 locate_sf<- st_as_sf(locate_new, coords=c("stop_lon","stop_lat" ),crs=4326)
